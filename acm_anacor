@@ -1,0 +1,748 @@
+# Pacotes a serem instalados e carregados ---------------------------------
+
+#Pacotes utilizados
+pacotes <- c("plotly","tidyverse","ggrepel","sjPlot","knitr","kableExtra",
+             "FactoMineR","cabootcrs","readxl")
+
+if(sum(as.numeric(!pacotes %in% installed.packages())) != 0){
+  instalador <- pacotes[!pacotes %in% installed.packages()]
+  for(i in 1:length(instalador)) {
+    install.packages(instalador, dependencies = T)
+    break()}
+  sapply(pacotes, require, character = T) 
+} else {
+  sapply(pacotes, require, character = T) 
+}
+
+
+# An?lise de Correspondênciasa M?ltiplas (ACM)
+# Carregando a base de dados
+dataset_tcc <- read_xlsx('Dataset TCC.xlsx')
+
+# Apresentando os dados
+
+dataset_tcc %>% 
+  kable() %>%
+  kable_styling(bootstrap_options = "striped", 
+                full_width = TRUE, 
+                font_size = 12)
+
+# Não há como se estabelecer umas única tabela de contingência que abranja todas
+# as variáveis presentes na base de dados. Assim, poderíamos utilizar a função
+# table() ou a função sjt.xtab() para analisarmos as variáveis duas a duas:
+
+# Montadora x Combustível
+Mont_comb <- sjt.xtab(var.row = dataset_tcc$Montadora, 
+             var.col = dataset_tcc$Combustivel,
+             show.exp = TRUE, 
+             show.row.prc = TRUE, 
+             show.col.prc = TRUE)
+Mont_comb
+
+# Montadora x Categoria
+Mont_cat <- sjt.xtab(var.row = dataset_tcc$Montadora, 
+                      var.col = dataset_tcc$Categoria,
+                      show.exp = TRUE, 
+                      show.row.prc = TRUE, 
+                      show.col.prc = TRUE)
+Mont_cat
+
+# Montadora x Faixa de Potência
+Mont_pot <- sjt.xtab(var.row = dataset_tcc$Montadora, 
+                      var.col = dataset_tcc$`Faixa de Potencia`,
+                      show.exp = TRUE, 
+                      show.row.prc = TRUE, 
+                      show.col.prc = TRUE)
+Mont_pot
+
+# Montadora x Custo
+Mont_custo <- sjt.xtab(var.row = dataset_tcc$Montadora, 
+                     var.col = dataset_tcc$`Faixa de Custo`,
+                     show.exp = TRUE, 
+                     show.row.prc = TRUE, 
+                     show.col.prc = TRUE)
+
+Mont_custo
+
+# Combustível x Categoria
+Comb_cat <- sjt.xtab(var.row = dataset_tcc$Combustivel, 
+                       var.col = dataset_tcc$Categoria,
+                       show.exp = TRUE, 
+                       show.row.prc = TRUE, 
+                       show.col.prc = TRUE)
+
+Comb_cat
+
+# Combustível x Faixa de Potência
+Comb_pot <- sjt.xtab(var.row = dataset_tcc$Combustivel, 
+                     var.col = dataset_tcc$`Faixa de Potencia`,
+                     show.exp = TRUE, 
+                     show.row.prc = TRUE, 
+                     show.col.prc = TRUE)
+
+Comb_pot
+
+# Combustível x Custo
+Comb_custo <- sjt.xtab(var.row = dataset_tcc$Combustivel, 
+                     var.col = dataset_tcc$`Faixa de Custo`,
+                     show.exp = TRUE, 
+                     show.row.prc = TRUE, 
+                     show.col.prc = TRUE)
+
+Comb_custo
+
+# Categoria x Faixa de Potência
+Cat_Pot <- sjt.xtab(var.row = dataset_tcc$Categoria, 
+                       var.col = dataset_tcc$`Faixa de Potencia`,
+                       show.exp = TRUE, 
+                       show.row.prc = TRUE, 
+                       show.col.prc = TRUE)
+
+Cat_Pot
+
+# Categoria x Faixa de Custo
+Cat_custo <- sjt.xtab(var.row = dataset_tcc$Categoria, 
+                    var.col = dataset_tcc$`Faixa de Custo`,
+                    show.exp = TRUE, 
+                    show.row.prc = TRUE, 
+                    show.col.prc = TRUE)
+
+Cat_custo
+
+# Potência x Faixa de Custo
+pot_custo <- sjt.xtab(var.row = dataset_tcc$`Faixa de Potencia`, 
+                      var.col = dataset_tcc$`Faixa de Custo`,
+                      show.exp = TRUE, 
+                      show.row.prc = TRUE, 
+                      show.col.prc = TRUE)
+
+pot_custo
+
+
+# Estudo do Qui-Quadrado de cada tabela de contingências
+
+# A) Montadora x Combustivel
+tab_dataset_tcc <- table(dataset_tcc$Montadora,
+                             dataset_tcc$Combustivel)
+
+tab_dataset_tcc
+
+qui2_dataset_tcc <- chisq.test(tab_dataset_tcc)
+qui2_dataset_tcc
+
+# B) Montadora x Categoria
+tab_dataset_tcc_2 <- table(dataset_tcc$Montadora,
+                         dataset_tcc$Categoria)
+
+tab_dataset_tcc_2
+
+qui2_dataset_tcc_2 <- chisq.test(tab_dataset_tcc_2)
+qui2_dataset_tcc_2
+
+# C) Montadora x Faixa de Potência
+tab_dataset_tcc_3 <- table(dataset_tcc$Montadora,
+                           dataset_tcc$`Faixa de Potencia`)
+
+tab_dataset_tcc_3
+
+qui2_dataset_tcc_3 <- chisq.test(tab_dataset_tcc_3)
+qui2_dataset_tcc_3
+
+# d) Montadora x Faixa de Custo
+tab_dataset_tcc_4 <- table(dataset_tcc$Montadora,
+                           dataset_tcc$`Faixa de Custo`)
+
+tab_dataset_tcc_4
+
+qui2_dataset_tcc_4 <- chisq.test(tab_dataset_tcc_4)
+qui2_dataset_tcc_4
+
+# e) Combustível x Categoria
+tab_dataset_tcc_5 <- table(dataset_tcc$Combustivel,
+                           dataset_tcc$Categoria)
+
+tab_dataset_tcc_5
+
+qui2_dataset_tcc_5 <- chisq.test(tab_dataset_tcc_5)
+qui2_dataset_tcc_5
+
+# f) Combustível x Faixa de Potência
+tab_dataset_tcc_6 <- table(dataset_tcc$Combustivel,
+                           dataset_tcc$`Faixa de Potencia`)
+
+tab_dataset_tcc_6
+
+qui2_dataset_tcc_6 <- chisq.test(tab_dataset_tcc_6)
+qui2_dataset_tcc_6
+
+# g) Combustível x Faixa de Custo
+tab_dataset_tcc_7 <- table(dataset_tcc$Combustivel,
+                           dataset_tcc$`Faixa de Custo`)
+
+tab_dataset_tcc_7
+
+qui2_dataset_tcc_7 <- chisq.test(tab_dataset_tcc_7)
+qui2_dataset_tcc_7
+
+# h) Categoria x Faixa de Potência
+tab_dataset_tcc_8 <- table(dataset_tcc$Categoria,
+                           dataset_tcc$`Faixa de Potencia`)
+
+tab_dataset_tcc_8
+
+qui2_dataset_tcc_8 <- chisq.test(tab_dataset_tcc_8)
+qui2_dataset_tcc_8
+
+# i) Categoria x Faixa de Custo
+tab_dataset_tcc_9 <- table(dataset_tcc$Categoria,
+                           dataset_tcc$`Faixa de Custo`)
+
+tab_dataset_tcc_9
+
+qui2_dataset_tcc_9 <- chisq.test(tab_dataset_tcc_9)
+qui2_dataset_tcc_9
+
+# j) Faixa de  Potência x Faixa de Custo
+tab_dataset_tcc_10 <- table(dataset_tcc$`Faixa de Potencia`,
+                           dataset_tcc$`Faixa de Custo`)
+
+tab_dataset_tcc_10
+
+qui2_dataset_tcc_10 <- chisq.test(tab_dataset_tcc_10)
+qui2_dataset_tcc_10
+
+# Matriz Binária e Matriz de Burt -----------------------------------------
+
+# Para se estabelecer uma matriz binária:
+matriz_binaria <- getindicator(Xinput = dataset_tcc[, 2:6])
+matriz_binaria
+
+CA(matriz_binaria)
+
+# Rodando a ACM - Matriz Binária
+ACM <- MCA(dataset_tcc[, 2:6], method = "Indicador")
+
+
+# O componte 'var$coord', presente no objeto ACM, contém as coordenadas 
+# de cada categoria. 
+ACM$var$coord
+
+# Assim, temos as coordenadas (categorias):
+round(ACM$var$coord, 3) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "striped", 
+                full_width = T, 
+                font_size = 12)
+
+# As inércias principais estão computadas no componente 'eig':
+ACM$eig
+eigen <- ACM$eig
+eigen
+# As coordenadas de cada observação estão no componente 'ind$coord' do objeto (Coordenada da observação)
+# ACM:
+ACM$ind$coord
+
+# Para estudarmos o percentual da inérica principal explicada por 
+# dimensão, podemos:
+categorias <- apply(dataset_tcc[,2:6], 
+                    MARGIN =  2, 
+                    FUN = function(x) nlevels(as.factor(x)))
+
+categorias
+
+It <- (sum(categorias) - length(categorias)) / length(categorias)
+It
+
+sum(ACM$eig[,1])
+
+It_explicada <- ACM$eig[,1] / sum(ACM$eig[,1])
+
+data.frame(Dimens?o = paste("Dimens?o", 1:length(It_explicada)),
+           In?rcia_Total = It_explicada) %>%
+  ggplot(aes(x = Dimens?o, 
+             y = In?rcia_Total, 
+             label = paste0(round(In?rcia_Total,3)*100,"%"))) +
+  geom_bar(stat = "identity",
+           color = "#440154FF", 
+           fill = "#287C8EFF") +
+  geom_label(vjust = 2) +
+  labs(title = paste("Inércia Total Explicada de",
+                     paste0(sum(It_explicada) * 100),"%")) +
+   theme_bw()
+
+# Já o número de dimensões da ACM é dado por:
+dimensoes <- sum(categorias) - length(categorias)
+dimensoes
+
+# O mapa perceptual -------------------------------------------------------
+
+#Para o estabelecimento de um Mapa Perceptual, precisamos:
+
+#1º Definir o número de categorias por variável
+categorias <- apply(dataset_tcc[,2:6], 
+                    MARGIN =  2, 
+                    FUN = function(x) nlevels(as.factor(x)))
+
+#2º transformar o objeto ACM em um data frame, levando-se em consideração quais 
+#tipos de coordenadas se quer plotar. Neste exemplo, utilizaremos as coordenadas
+#dadas pela matriz de binária
+ACM_mp <- data.frame(ACM$var$coord, Vari?vel = rep(names(categorias), categorias))
+
+ACM_mp %>%
+  rownames_to_column() %>%
+  rename(Categoria = 1) %>%
+  mutate(Categoria = gsub("Montadora","", Categoria),
+         Categoria = gsub("Mombustivel","", Categoria),
+         Categoria = gsub("Faixa de Potencia","", Categoria),
+         Categoria = gsub("Faixa de Custo","", Categoria)) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "striped", 
+                full_width = T, 
+                font_size = 12)
+
+#Plotando o Mapa Perceptual:
+ACM_mp %>%
+  rownames_to_column() %>%
+  rename(Categoria = 1) %>%
+  ggplot(aes(x = Dim.1, 
+             y = Dim.2, 
+             label = Categoria, 
+             color = Vari?vel, 
+             shape = Vari?vel)) +
+  geom_point() +
+  geom_label_repel() +
+  geom_vline(aes(xintercept = 0), linetype = "dashed", color = "grey") +
+  geom_hline(aes(yintercept = 0), linetype = "dashed", color = "grey") +
+  labs(x = paste("Dimensão 1:", paste0(round(ACM$eig[1,2], 2), "%")),
+       y = paste("Dimensão 2:", paste0(round(ACM$eig[2,2], 2), "%"))) +
+  scale_color_viridis_d() +
+  theme(panel.background = element_rect("white"),
+        panel.border = element_rect("NA"),
+        panel.grid = element_line("gray95"),
+        legend.position = "none")
+
+#Plotando o Mapa Perceptual, evidenciando-se as coordenadas das observações:
+
+#Criando um mapa perceptual mais elegante, com as posições relativas de cada
+#observação
+
+#1º Salvar as posições relativas de cada observação
+ACM_observacoes_df <- data.frame(ACM$ind$coord)
+
+#2º Utilizando a estrutura do mapa perceptual já estabelecido, vamos acrescentar 
+#as novas informações presentes no objeto mca_observacoes_df
+
+ACM_observacoes_df %>% 
+  ggplot(aes(x = Dim.1, y = Dim.2, label = dataset_tcc$Modelo)) +
+  geom_point(shape = 17, color = "#E76F5AFF", size = 2) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
+  geom_text_repel(max.overlaps = 15, size = 3) +
+  geom_density2d(color = "gray80") +
+  geom_label_repel(data = ACM_mp, 
+                   aes(x = Dim.1, y = Dim.2, 
+                       label = rownames(ACM_mp), 
+                       fill = Variável), 
+                   color = "white") +
+  labs(x = paste("Dimensão 1:", paste0(round(ACM$eig[,2][1], digits = 2), "%")),
+       y = paste("Dimensão 2:", paste0(round(ACM$eig[,2][2], digits = 2), "%"))) +
+  scale_fill_viridis_d() +
+  theme(panel.background = element_rect("white"),
+        panel.border = element_rect("NA"),
+        panel.grid = element_line("gray95"),
+        legend.position = "none")
+
+# Analisando via matriz de BURT
+
+# Para a matriz de Burt (Estudar as categorias e não as observações)
+matriz_burt <- getBurt(Xinput = dataset_tcc[, 2:6])
+matriz_burt
+
+CA(matriz_burt)
+
+# Rodando a ACM - Burt
+ACM_Burt <- MCA(dataset_tcc[, 2:6], method = "Burt")
+
+
+# O componte 'var$coord', presente no objeto ACM, contém as coordenadas 
+# de cada categoria. 
+ACM_Burt$var$coord
+
+# Assim, temos as coordenadas (categorias):
+round(ACM_Burt$var$coord, 3) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "striped", 
+                full_width = T, 
+                font_size = 12)
+
+# As inércias principais estão computadas no componente 'eig':
+ACM_Burt$eig
+
+# As coordenadas de cada observação estão no componente 'ind$coord' do objeto (Coordenada da observação)
+# ACM:
+ACM_Burt$ind$coord
+
+# Para estudarmos o percentual da inérica principal explicada por 
+# dimensão, podemos:
+categorias_Burt <- apply(dataset_tcc[,2:6], 
+                    MARGIN =  2, 
+                    FUN = function(x) nlevels(as.factor(x)))
+
+categorias_Burt
+
+It_Burt <- (sum(categorias_Burt) - length(categorias_Burt)) / length(categorias_Burt)
+It_Burt
+
+sum(ACM_Burt$eig[,1])
+
+It_explicada_Burt <- ACM_Burt$eig[,1] / sum(ACM_Burt$eig[,1])
+
+data.frame(Dimens?o = paste("Dimens?o", 1:length(It_explicada_Burt)),
+           In?rcia_Total_Burt = It_explicada_Burt) %>%
+  ggplot(aes(x = Dimens?o, 
+             y = In?rcia_Total_Burt, 
+             label = paste0(round(In?rcia_Total_Burt,3)*100,"%"))) +
+  geom_bar(stat = "identity",
+           color = "#440154FF", 
+           fill = "#287C8EFF") +
+  geom_label(vjust = 2) +
+  labs(title = paste("Inércia Total Explicada de",
+                     paste0(sum(It_explicada_Burt) * 100),"%")) +
+  theme_bw()
+
+# Já o número de dimensões da ACM é dado por:
+dimensoes_Burt <- sum(categorias_Burt) - length(categorias_Burt)
+dimensoes_Burt
+
+# O mapa perceptual -------------------------------------------------------
+
+#Para o estabelecimento de um Mapa Perceptual, precisamos:
+
+#1º Definir o número de categorias por variável
+categorias_Burt <- apply(dataset_tcc[,2:6], 
+                    MARGIN =  2, 
+                    FUN = function(x) nlevels(as.factor(x)))
+
+#2º transformar o objeto ACM em um data frame, levando-se em consideração quais 
+#tipos de coordenadas se quer plotar. Neste exemplo, utilizaremos as coordenadas
+#dadas pela matriz de binária
+ACM_mp_Burt <- data.frame(ACM_Burt$var$coord, Vari?vel = rep(names(categorias_Burt), categorias_Burt))
+
+ACM_mp_Burt %>%
+  rownames_to_column() %>%
+  rename(Categoria_Burt = 1) %>%
+  mutate(Categoria_Burt = gsub("perfil.","", Categoria_Burt),
+         Categoria_Burt = gsub("aplicacao.","", Categoria_Burt),
+         Categoria_Burt = gsub("estado_civil.","", Categoria_Burt)) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "striped", 
+                full_width = T, 
+                font_size = 19)
+
+#Plotando o Mapa Perceptual:
+ACM_mp_Burt %>%
+  rownames_to_column() %>%
+  rename(Categoria = 1) %>%
+  ggplot(aes(x = Dim.1, 
+             y = Dim.2, 
+             label = Categoria, 
+             color = Vari?vel, 
+             shape = Vari?vel)) +
+  geom_point(shape = 15, color = "#E76F5AFF", size = 2) +
+  geom_label_repel(ata = ACM_mp_Burt, 
+                   aes(x = Dim.1, y = Dim.2, 
+                       fill = Vari?vel), 
+                   color = "white") +
+  geom_vline(aes(xintercept = 0), linetype = "dashed", color = "grey50") +
+  geom_hline(aes(yintercept = 0), linetype = "dashed", color = "grey50") +
+  labs(x = paste("Dimens?o 1:", paste0(round(ACM_Burt$eig[1,2], 2), "%")),
+       y = paste("Dimens?o2:", paste0(round(ACM_Burt$eig[2,2], 2), "%"))) +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d() +
+  theme(panel.background = element_rect("white"),
+        panel.border = element_rect("NA"),
+        panel.grid = element_line("gray95"),
+        legend.position = "none")
+        
+  # Construção dos mapas de calor para cada par de variáveis com análise de correspondencia simples
+  
+  # Análise de Correspondência Simples (ANACOR) - Abordagem Teórica ---------
+
+#Carregando a base de dados
+
+#A partir da Montadora
+dataset_Anacor <- read_xlsx("Dataset TCC.xlsx")
+dataset_Mont_Comb <- dataset_Anacor[,c("Modelo","Montadora","Combustivel")]
+dataset_Mont_Cat <- dataset_Anacor[,c("Modelo","Montadora","Categoria")]
+dataset_Mont_Pot <- dataset_Anacor[,c("Modelo","Montadora","Faixa de Potencia")]
+dataset_Mont_Cst <- dataset_Anacor[,c("Modelo","Montadora","Faixa de Custo")]
+
+#A partir do Combustível
+dataset_Comb_cat <- dataset_Anacor[,c("Modelo","Combustivel","Categoria")]
+dataset_Comb_Pot <- dataset_Anacor[,c("Modelo","Combustivel","Faixa de Potencia")]
+dataset_Comb_Cst <- dataset_Anacor[,c("Modelo","Combustivel","Faixa de Custo")]
+
+#A partir da categoria
+dataset_cat_Pot <- dataset_Anacor[,c("Modelo","Categoria","Faixa de Potencia")]
+dataset_cat_Cst <- dataset_Anacor[,c("Modelo","Categoria","Faixa de Custo")]
+
+#A partir da Potência
+dataset_pot_Cst <- dataset_Anacor[,c("Modelo","Faixa de Potencia","Faixa de Custo")]
+
+#Criando uma tabela de contingências
+tab_cat_cst <- table(dataset_Anacor$Categoria, 
+             dataset_Anacor$`Faixa de Custo`)
+
+tab_cat_pot <- table(dataset_Anacor$Categoria, 
+                     dataset_Anacor$`Faixa de Potencia`)
+
+tab_comb_cat <- table(dataset_Anacor$Combustivel, 
+                     dataset_Anacor$Categoria)
+
+tab_comb_cst <- table(dataset_Anacor$Combustivel, 
+                     dataset_Anacor$`Faixa de Custo`)
+
+tab_comb_pot <- table(dataset_Anacor$Combustivel, 
+                     dataset_Anacor$`Faixa de Potencia`)
+
+tab_Mont_cat <- table(dataset_Anacor$Montadora, 
+                     dataset_Anacor$Categoria)
+
+tab_Mont_comb <- table(dataset_Anacor$Montadora, 
+                     dataset_Anacor$Combustivel)
+
+tab_Mont_Pot <- table(dataset_Anacor$Montadora, 
+                     dataset_Anacor$`Faixa de Potencia`)
+tab_Mont_Cst <- table(dataset_Anacor$Montadora, 
+                      dataset_Anacor$`Faixa de Custo`)
+
+tab_Pot_cst <- table(dataset_Anacor$`Faixa de Potencia`, 
+                     dataset_Anacor$`Faixa de Custo`)
+
+
+#Teste Qui-Quadrado
+qui2_cat_cst <- chisq.test(tab_cat_cst)
+qui2_cat_pot <- chisq.test(tab_cat_pot)
+qui2_comb_cat <- chisq.test(tab_comb_cat)
+qui2_comb_Pot <- chisq.test(tab_comb_pot)
+qui2_comb_cst <- chisq.test(tab_comb_cst)
+qui2_Mont_cat <- chisq.test(tab_Mont_cat)
+qui2_Mont_comb <- chisq.test(tab_Mont_comb)
+qui2_Mont_cst <- chisq.test(tab_Mont_Cst)
+qui2_Mont_Pot <- chisq.test(tab_Mont_Pot)
+qui2_Pot_cst <- chisq.test(tab_Pot_cst)
+
+#Mapa de calor dos resíduos padronizados ajustados Cat_cst
+data.frame(qui2_cat_cst$stdres) %>%
+  rename(Categoria = 1,
+         `Faixa de Custo` = 2) %>% 
+  ggplot(aes(x = fct_rev(Categoria), 
+             y = `Faixa de Custo`, 
+             fill = Freq, 
+             label = round(Freq,3))) +
+  geom_tile() +
+  geom_label(size = 3, fill = "white") +
+  scale_fill_gradient2(low = "#440154FF", 
+                       mid = "white", 
+                       high = "#FDE725FF",
+                       midpoint = 0) +
+  labs(x = NULL, y = NULL) +
+  coord_flip() +
+  theme(legend.title = element_blank(), 
+        panel.background = element_rect("white"),
+        legend.position = "none",
+        axis.text.x = element_text())
+
+#Mapa de calor dos resíduos padronizados ajustados cat_Pot
+data.frame(qui2_cat_pot$stdres) %>%
+  rename(Categoria = 1,
+         `Faixa de Potencia` = 2) %>% 
+  ggplot(aes(x = fct_rev(Categoria), 
+             y = `Faixa de Potencia`, 
+             fill = Freq, 
+             label = round(Freq,3))) +
+  geom_tile() +
+  geom_label(size = 3, fill = "white") +
+  scale_fill_gradient2(low = "#440154FF", 
+                       mid = "white", 
+                       high = "#FDE725FF",
+                       midpoint = 0) +
+  labs(x = NULL, y = NULL) +
+  coord_flip() +
+  theme(legend.title = element_blank(), 
+        panel.background = element_rect("white"),
+        legend.position = "none",
+        axis.text.x = element_text())
+
+#Mapa de calor dos resíduos padronizados ajustados Comb_Cat
+data.frame(qui2_comb_cat$stdres) %>%
+  rename(Combustivel = 1,
+         Categoria = 2) %>% 
+  ggplot(aes(x = fct_rev(Combustivel), 
+             y = Categoria, 
+             fill = Freq, 
+             label = round(Freq,3))) +
+  geom_tile() +
+  geom_label(size = 3, fill = "white") +
+  scale_fill_gradient2(low = "#440154FF", 
+                       mid = "white", 
+                       high = "#FDE725FF",
+                       midpoint = 0) +
+  labs(x = NULL, y = NULL) +
+  coord_flip() +
+  theme(legend.title = element_blank(), 
+        panel.background = element_rect("white"),
+        legend.position = "none",
+        axis.text.x = element_text())
+
+
+#Mapa de calor dos resíduos padronizados ajustados Comb_Cst
+data.frame(qui2_comb_cst$stdres) %>%
+  rename(Combustivel = 1,
+         `Faixa de Custo` = 2) %>% 
+  ggplot(aes(x = fct_rev(Combustivel), 
+             y = `Faixa de Custo`, 
+             fill = Freq, 
+             label = round(Freq,3))) +
+  geom_tile() +
+  geom_label(size = 3, fill = "white") +
+  scale_fill_gradient2(low = "#440154FF", 
+                       mid = "white", 
+                       high = "#FDE725FF",
+                       midpoint = 0) +
+  labs(x = NULL, y = NULL) +
+  coord_flip() +
+  theme(legend.title = element_blank(), 
+        panel.background = element_rect("white"),
+        legend.position = "none",
+        axis.text.x = element_text())
+
+
+#Mapa de calor dos resíduos padronizados ajustados Comb_Pot
+data.frame(qui2_comb_Pot$stdres) %>%
+  rename(Combustivel = 1,
+         `Faixa de Potencia` = 2) %>% 
+  ggplot(aes(x = fct_rev(Combustivel), 
+             y = `Faixa de Potencia`, 
+             fill = Freq, 
+             label = round(Freq,3))) +
+  geom_tile() +
+  geom_label(size = 3, fill = "white") +
+  scale_fill_gradient2(low = "#440154FF", 
+                       mid = "white", 
+                       high = "#FDE725FF",
+                       midpoint = 0) +
+  labs(x = NULL, y = NULL) +
+  coord_flip() +
+  theme(legend.title = element_blank(), 
+        panel.background = element_rect("white"),
+        legend.position = "none",
+        axis.text.x = element_text())
+
+
+#Mapa de calor dos resíduos padronizados ajustados Mont_Cat
+data.frame(qui2_Mont_cat$stdres) %>%
+  rename(Montadora = 1,
+         Categoria = 2) %>% 
+  ggplot(aes(x = fct_rev(Montadora), 
+             y = Categoria, 
+             fill = Freq, 
+             label = round(Freq,3))) +
+  geom_tile() +
+  geom_label(size = 3, fill = "white") +
+  scale_fill_gradient2(low = "#440154FF", 
+                       mid = "white", 
+                       high = "#FDE725FF",
+                       midpoint = 0) +
+  labs(x = NULL, y = NULL) +
+  coord_flip() +
+  theme(legend.title = element_blank(), 
+        panel.background = element_rect("white"),
+        legend.position = "none",
+        axis.text.x = element_text())
+
+#Mapa de calor dos resíduos padronizados ajustados Mont_Comb
+data.frame(qui2_Mont_comb$stdres) %>%
+  rename(Montadora = 1,
+         Combustivel = 2) %>% 
+  ggplot(aes(x = fct_rev(Montadora), 
+             y = Combustivel, 
+             fill = Freq, 
+             label = round(Freq,3))) +
+  geom_tile() +
+  geom_label(size = 3, fill = "white") +
+  scale_fill_gradient2(low = "#440154FF", 
+                       mid = "white", 
+                       high = "#FDE725FF",
+                       midpoint = 0) +
+  labs(x = NULL, y = NULL) +
+  coord_flip() +
+  theme(legend.title = element_blank(), 
+        panel.background = element_rect("white"),
+        legend.position = "none",
+        axis.text.x = element_text())
+
+
+#Mapa de calor dos resíduos padronizados ajustados Mont_Cst
+data.frame(qui2_Mont_cst$stdres) %>%
+  rename(Montadora = 1,
+         `Faixa de Custo` = 2) %>% 
+  ggplot(aes(x = fct_rev(Montadora), 
+             y = `Faixa de Custo`, 
+             fill = Freq, 
+             label = round(Freq,3))) +
+  geom_tile() +
+  geom_label(size = 3, fill = "white") +
+  scale_fill_gradient2(low = "#440154FF", 
+                       mid = "white", 
+                       high = "#FDE725FF",
+                       midpoint = 0) +
+  labs(x = NULL, y = NULL) +
+  coord_flip() +
+  theme(legend.title = element_blank(), 
+        panel.background = element_rect("white"),
+        legend.position = "none",
+        axis.text.x = element_text())
+
+
+#Mapa de calor dos resíduos padronizados ajustados Montadora_Pot
+data.frame(qui2_Mont_Pot$stdres) %>%
+  rename(Montadora = 1,
+         `Faixa de Potencia` = 2) %>% 
+  ggplot(aes(x = fct_rev(Montadora), 
+             y = `Faixa de Potencia`, 
+             fill = Freq, 
+             label = round(Freq,3))) +
+  geom_tile() +
+  geom_label(size = 3, fill = "white") +
+  scale_fill_gradient2(low = "#440154FF", 
+                       mid = "white", 
+                       high = "#FDE725FF",
+                       midpoint = 0) +
+  labs(x = NULL, y = NULL) +
+  coord_flip() +
+  theme(legend.title = element_blank(), 
+        panel.background = element_rect("white"),
+        legend.position = "none",
+        axis.text.x = element_text())
+
+#Mapa de calor dos resíduos padronizados ajustados Montadora_Pot
+data.frame(qui2_Pot_cst$stdres) %>%
+  rename(`Faixa de Potencia` = 1,
+         `Faixa de Custo` = 2) %>% 
+  ggplot(aes(x = fct_rev(`Faixa de Potencia`), 
+             y = `Faixa de Custo`, 
+             fill = Freq, 
+             label = round(Freq,3))) +
+  geom_tile() +
+  geom_label(size = 3, fill = "white") +
+  scale_fill_gradient2(low = "#440154FF", 
+                       mid = "white", 
+                       high = "#FDE725FF",
+                       midpoint = 0) +
+  labs(x = NULL, y = NULL) +
+  coord_flip() +
+  theme(legend.title = element_blank(), 
+        panel.background = element_rect("white"),
+        legend.position = "none",
+        axis.text.x = element_text())
